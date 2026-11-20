@@ -2,7 +2,7 @@
 from _common import *  # noqa
 import numpy as np
 from manim import *
-from common.style import DENSITY_STOPS, FG, ACCENT
+from common.style import DENSITY_STOPS, FG, ACCENT, MUTED
 from common.logistic import bifurcation_density, density_to_rgb, DELTA, ALPHA, R_INF
 
 LEVELS = 3            # zoom depth: r shrinks by delta, x by |alpha| per level
@@ -43,6 +43,13 @@ class BifurcationZoom(Scene):
         self.play(FadeIn(box), Write(txt), run_time=2)
         self.wait(1.5)
         delta = MathTex(r"\delta = 4.669\,201\,609\,\ldots", color=ACCENT).scale(1.4)
-        self.play(FadeOut(txt), img.animate.set_opacity(0.25),
-                  box.animate.set_opacity(0), Write(delta), run_time=2)
+        self.play(FadeOut(txt), FadeOut(box), img.animate.set_opacity(0.2), run_time=1)
+        self.play(Write(delta), run_time=1.5)
         self.wait(2)
+        series = Tex(r"Routes to Chaos", font_size=72, color=FG)
+        part = Tex(r"Part 1 \,$\cdot$\, The Logistic Map \& Feigenbaum's Constant",
+                   font_size=36, color=MUTED).next_to(series, DOWN, buff=0.4)
+        self.play(FadeOut(delta), FadeOut(img), run_time=1)
+        self.play(FadeIn(series, shift=0.2 * UP), FadeIn(part), run_time=1.5)
+        self.wait(2.5)
+        self.play(FadeOut(series), FadeOut(part), run_time=1)

@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Logistic Map & Feigenbaum</title>
+<meta name="description" content="Routes to Chaos, part 1: interactive companion to the video on the logistic map, period doubling and Feigenbaum's universal constant.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<main>
+<p class="hint"><a href="../">Routes to Chaos</a> · Part 1</p>
+<h1>The Logistic Map &amp; Feigenbaum's Universal Constant</h1>
+<p class="lede">A one-line population model contains period doubling, chaos, and a number that shows up in
+fluids, circuits and lasers. Every figure on this page is live: move the sliders, zoom, click.</p>
+<div class="video">Video coming soon</div>
+<nav class="toc"><a href="#s1">1 · The rule</a><a href="#s2">2 · Stability</a><a href="#s3">3 · Cascade</a>
+<a href="#s4">4 · Chaos</a><a href="#s5">5 · Universality</a><a href="#s6">6 · Renormalisation</a><a href="#s7">Epilogue</a></nav>
+
+<h2 id="s1"><span class="num">1</span>A very simple rule</h2>
+<p>Let $x_n \in [0,1]$ be the size of a population in year $n$, as a fraction of the maximum the environment
+can sustain. Each year it is multiplied by a fertility $r$ (growth), but the closer it gets to 1 the less food
+there is (crowding):</p>
+$$x_{n+1} = f(x_n) = r\,x_n\,(1-x_n).$$
+<p>To <em>iterate</em> graphically, go vertically to the curve (that's $x_{n+1}$), then horizontally to the
+diagonal $y=x$ — the diagonal turns the output back into an input — and repeat. The staircase is a
+<strong>cobweb diagram</strong>; on the right, the same values against time. For $r<3$ every orbit ends on
+the <strong>fixed point</strong> $x^\ast = 1 - 1/r$, where the curve crosses the diagonal.</p>
+<div class="widget">
+  <div class="row"><canvas id="c1-web"></canvas><canvas id="c1-ts"></canvas></div>
+  <div class="controls">
+    <label>r <input id="c1-r" type="range" min="0" max="4" step="0.001" value="2.6"><output id="c1-r-out"></output></label>
+    <label>x₀ <input id="c1-x0" type="range" min="0.001" max="0.999" step="0.001" value="0.2"><output id="c1-x0-out"></output></label>
+  </div>
+  <div class="readout" id="c1-read"></div>
+</div>
+
+<h2 id="s2"><span class="num">2</span>When a fixed point breaks</h2>
+<p>Why does the orbit converge? Near $x^\ast$ the curve is almost a straight line of slope $f'(x^\ast)$, so
+the distance to the fixed point is multiplied by that slope at every step:</p>
+$$x_{n+1}-x^\ast \approx f'(x^\ast)\,(x_n - x^\ast), \qquad f'(x^\ast) = r(1-2x^\ast) = 2-r .$$
+<p>If $|f'(x^\ast)|<1$ the distance shrinks (stable); a negative slope makes the orbit zig-zag around
+$x^\ast$. At $r=3$ the slope reaches $-1$ and the fixed point becomes unstable. The orbit then settles on a
+<strong>2-cycle</strong> $a\to b\to a$. Since $f(f(a))=a$, the cycle points are fixed points of $f\circ f$:
+tick the box to see them. Notice that, around $x=\tfrac12$, $f\circ f$ looks like a small upside-down copy
+of $f$. The same argument applied to $f\circ f$ predicts the next doubling at $r=1+\sqrt6\approx 3.449$.</p>
+<div class="widget">
+  <div class="row"><canvas id="c2-web"></canvas><canvas id="c2-ts"></canvas></div>
+  <div class="controls">
+    <label>r <input id="c2-r" type="range" min="2.5" max="3.6" step="0.001" value="2.9"><output id="c2-r-out"></output></label>
+    <label>x₀ <input id="c2-x0" type="range" min="0.001" max="0.999" step="0.001" value="0.2"><output id="c2-x0-out"></output></label>
+    <label><input id="c2-f2" type="checkbox"> show $f\circ f$</label>
+  </div>
+  <div class="readout" id="c2-read"></div>
+</div>
+
+<h2 id="s3"><span class="num">3</span>The period-doubling cascade</h2>
+<p>Forget the transient and plot, above each $r$, the values the orbit keeps returning to. This is the
+<strong>bifurcation diagram</strong>. <em>Click</em> anywhere on it to see the corresponding orbit; scroll to
+zoom, drag to move, double-click to reset.</p>
+<div class="widget">
+  <canvas id="bif3"></canvas>
+  <div class="controls"><button id="bif3-reset">Reset view</button>
+    <label><input id="bif3-marks" type="checkbox" checked> mark the forks $r_n$ and $r_\infty$</label></div>
+  <div class="row" style="margin-top:12px"><canvas id="c3-web"></canvas><canvas id="c3-ts"></canvas></div>
+  <div class="controls">
+    <label>r <input id="c3-r" type="range" min="2.8" max="4" step="0.0001" value="3.5" data-dp="4"><output id="c3-r-out"></output></label>
+    <label>x₀ <input id="c3-x0" type="range" min="0.001" max="0.999" step="0.001" value="0.2"><output id="c3-x0-out"></output></label>
+  </div>
+  <div class="readout" id="c3-read"></div>
+</div>
+<p>The forks come faster and faster. With $\Delta_n = r_{n+1}-r_n$, the ratio of successive gaps converges
+(values below computed with 60-digit arithmetic):</p>
+<div class="widget tablewrap"><table id="cascade-table"></table></div>
+<p class="key">$\displaystyle \delta = \lim_{n\to\infty}\frac{\Delta_{n-1}}{\Delta_n} = 4.669\,201\,609\,102\,990\ldots$
+— Feigenbaum's constant (1975). Because the gaps shrink geometrically their sum is finite, and infinitely many
+doublings accumulate before $r_\infty = 3.569\,945\,671\,8\ldots$</p>
+
+<h2 id="s4"><span class="num">4</span>Beyond $r_\infty$: chaos</h2>
+<p>Beyond $r_\infty$ the orbit never repeats, but it is still perfectly deterministic. Start two orbits
+$10^{-k}$ apart: the gap $\varepsilon_n$ grows exponentially, $\varepsilon_n \approx \varepsilon_0 e^{\lambda n}$
+(a straight line on the log plot), until it is as large as the signal itself.</p>
+<div class="widget">
+  <canvas id="sens-top"></canvas><canvas id="sens-bot" style="margin-top:8px"></canvas>
+  <div class="controls">
+    <label>r <input id="sens-r" type="range" min="3.4" max="4" step="0.001" value="3.9"><output id="sens-r-out"></output></label>
+    <label>gap 10<sup>−k</sup>, k = <input id="sens-k" type="range" min="2" max="13" step="1" value="8" data-dp="0"><output id="sens-k-out"></output></label>
+  </div>
+  <div class="readout" id="sens-read"></div>
+</div>
+<p>Why exponential? Each step multiplies a small error by $|f'(x_n)|$ — the same slope as in chapter 2. The
+average growth rate is the <strong>Lyapunov exponent</strong>
+$$\lambda = \lim_{n\to\infty}\frac1n\sum_{k=0}^{n-1}\ln|f'(x_k)| .$$
+$\lambda<0$: stable cycle (green); $\lambda>0$: chaos (red). Inside the chaos, <em>windows</em> of order
+reappear — the widest starts at $r = 1+\sqrt8$ with period 3. Zoom into it: a miniature copy of the whole
+diagram, with the same $\delta$.</p>
+<div class="widget">
+  <canvas id="bif4"></canvas><canvas id="lyap4" style="margin-top:4px"></canvas>
+  <div class="controls"><button id="bif4-reset">Reset view</button><button id="bif4-window">Zoom into the period-3 window</button></div>
+</div>
+
+<h2 id="s5"><span class="num">5</span>Universality</h2>
+<p>Change the rule. Any map with a single smooth hump goes through the same cascade, with the same
+$\delta$. Only the shape of the very top of the hump matters: a flat (quartic) top belongs to a different
+universality class.</p>
+<div class="widget">
+  <div class="controls" style="margin:0 0 10px"><label>map <select id="univ-map">
+    <option value="logistic">r x(1−x) — logistic</option><option value="sine">a sin(πx) — sine</option>
+    <option value="ricker">x e^{r(1−x)} — Ricker (fisheries)</option><option value="quartic">1 − a x⁴ — quartic top</option>
+  </select></label><button id="bif5-reset">Reset view</button></div>
+  <div class="row"><canvas id="map5" style="flex:0 1 240px"></canvas><canvas id="bif5" style="flex:3 1 400px"></canvas></div>
+  <div class="readout" id="univ-read"></div>
+</div>
+<p>The same constant has been measured in experiments — fluid layers heated from below, nonlinear electronic
+circuits, lasers — where nobody wrote down a parabola.</p>
+
+<h2 id="s6"><span class="num">6</span>Why? Renormalisation</h2>
+<p>At the special parameters $R_n$ (where $x=\tfrac12$ lies on the $2^n$-cycle), look at $f^{2^n}$ near
+$x=\tfrac12$ inside a box of size $|\alpha|^{-n}$. Blown up by $\alpha^n$ (with $\alpha=-2.5029\ldots$, the
+minus sign meaning a 180° rotation), it reproduces the previous stage — better and better as $n$ grows. The
+rescaled curves converge to a universal function $g$, the fixed point of the doubling operator</p>
+$$T[f](x) = \alpha\, f\big(f(x/\alpha)\big), \qquad T[g] = g .$$
+<div class="widget">
+  <div class="row"><canvas id="ren-left"></canvas><canvas id="ren-right"></canvas></div>
+  <div class="controls"><label>stage n <input id="ren-n" type="range" min="0" max="6" step="1" value="1" data-dp="0"><output id="ren-n-out"></output></label></div>
+  <div class="readout" id="ren-read"></div>
+</div>
+<p>In the space of all one-hump maps, $T$ pulls maps toward $g$ along a whole surface, and pushes them away
+along a single direction, multiplying distances by $\delta$. Each period doubling is one application of $T$,
+so the gaps between the $R_n$ shrink by $\delta$ — for <em>any</em> family of maps that crosses that surface.
+$\delta$ and $\alpha$ are properties of period doubling itself.</p>
+
+<h2 id="s7"><span class="num">·</span>Epilogue: into the complex plane</h2>
+<p>With $z = r(\tfrac12 - x)$ the logistic map becomes $z_{n+1} = z_n^2 + c$ with $c = r/2 - r^2/4$. Top: the
+bifurcation diagram in $c$ (so $r$ grows to the left). Bottom: let $c$ be complex — the Mandelbrot set. Each
+fork sits where two bulbs touch; the period-3 window is a small copy of the whole set. That is the subject of
+part 2.</p>
+<div class="widget"><canvas id="man-top"></canvas><canvas id="man-bot"></canvas></div>
+<p class="hint">Source code and the video's Manim scenes: <a href="https://github.com/romainmorleghem/routes-to-chaos">github.com/romainmorleghem/routes-to-chaos</a></p>
+</main>
+<script type="module" src="ep1.js"></script>
+</body>
+</html>

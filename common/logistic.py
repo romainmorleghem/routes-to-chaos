@@ -19,17 +19,20 @@ def orbit(r, x0, n):
 
 
 def bifurcation_density(r_min, r_max, x_min, x_max, width, height,
-                        transient=2000, samples=1500, x0=0.5):
-    """Return a (height, width) array of visit densities, one column per r."""
+                        transient=2000, samples=1500, x0=0.5, fn=None):
+    """Return a (height, width) array of visit densities, one column per r.
+
+    `fn(r, x)` is the (vectorised) map; default is the logistic map."""
+    fn = fn or f
     r = np.linspace(r_min, r_max, width)
-    x = np.full(width, x0)
+    x = np.full(width, x0, dtype=float)
     for _ in range(transient):
-        x = r * x * (1.0 - x)
+        x = fn(r, x)
     img = np.zeros((height, width))
     cols = np.arange(width)
     scale = (height - 1) / (x_max - x_min)
     for _ in range(samples):
-        x = r * x * (1.0 - x)
+        x = fn(r, x)
         row = np.round((x_max - x) * scale).astype(int)
         ok = (row >= 0) & (row < height)
         np.add.at(img, (row[ok], cols[ok]), 1.0)
@@ -56,3 +59,26 @@ def lyapunov(r, transient=1000, n=4000, x0=0.5):
         x = r * x * (1 - x)
         acc += np.log(np.abs(r * (1 - 2 * x)) + 1e-300)
     return acc / n
+
+
+def orbit_fn(fn, r, x0, n):
+    xs = np.empty(n + 1)
+    xs[0] = x0
+    for i in range(n):
+        xs[i + 1] = fn(r, xs[i])
+    return xs
+
+
+def mandelbrot_escape(re_min, re_max, im_min, im_max, width, height, iters=300):
+    """Smooth escape-time values (nan inside the set)."""
+    c = (np.linspace(re_min, re_max, width)[None, :]
+         + 1j * np.linspace(im_max, im_min, height)[:, None])
+    z = np.zeros_like(c)
+    out = np.full(c.shape, np.nan)
+    alive = np.ones(c.shape, bool)
+    for k in range(iters):
+        z[alive] = z[alive] ** 2 + c[alive]
+        esc = alive & (np.abs(z) > 4)
+        out[esc] = k + 1 - np.log2(np.log(np.abs(z[esc])))
+        alive &= ~esc
+    return out
