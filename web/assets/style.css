@@ -34,7 +34,7 @@ th { color: var(--muted); font-weight: 500; }
 td.acc { color: var(--accent); }
 .tablewrap { overflow-x: auto; }
 .key { background: #1a1630; border-left: 3px solid var(--accent); padding: 10px 14px; border-radius: 0 6px 6px 0; }
-.video { aspect-ratio: 16/9; background: #000; border-radius: 10px; display: grid; place-items: center;
+.video { width: 100%; display: block; aspect-ratio: 16/9; background: #000; border-radius: 10px;
   color: var(--muted); font: 14px system-ui, sans-serif; }
 .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-top: 24px; }
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; text-decoration: none; color: var(--fg); }
