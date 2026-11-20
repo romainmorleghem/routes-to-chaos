@@ -1,0 +1,5 @@
+manim>=0.18
+numpy
+scipy
+matplotlib
+mpmath
