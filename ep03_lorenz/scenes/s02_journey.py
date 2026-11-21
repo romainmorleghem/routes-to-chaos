@@ -8,7 +8,7 @@ from common.lorenz import fixed_points, jacobian, RHO_HOPF
 from _stages import lorenz_points, curve, project, glow_image, TRAIL
 
 STARTS = [(-8, 6, 12), (9, -4, 30), (2, 12, 5), (-12, -10, 40), (5, 5, 20), (-3, -9, 8)]
-SCR = dict(scale=0.135, screen=np.array([0.3, 0.55, 0]))
+SCR = dict(scale=0.095, screen=np.array([0.6, -0.35, 0]))
 
 
 def rho_bar():
@@ -52,15 +52,15 @@ class Journey(Narrated):
                             center=np.array([0, 0, zc])))
             return g
 
-        b = bundle(0.5, 8, zc=12)
-        d = fp_dots(0.5, 12)
+        b = bundle(0.5, 8, zc=20)
+        d = fp_dots(0.5, 20)
         self.say(r"$\rho = 0.5$: no convection. Wherever it starts, the fluid comes to rest: "
                  r"every trajectory falls into the origin.", anims=[Create(b, lag_ratio=0.1), FadeIn(d)],
                  run_time=4)
         self.play(FadeOut(b), FadeOut(d), rv.animate.set_value(10), run_time=1.5)
         self.add(ticks[0])
-        b = bundle(10, 12, zc=12)
-        d = fp_dots(10, 12)
+        b = bundle(10, 12, zc=20)
+        d = fp_dots(10, 20)
         self.say(r"At $\rho = 1$ rest becomes unstable and two new equilibria $C_\pm$ appear: steady rolls, "
                  r"turning one way or the other. The same event as $r = 1$ in Part 1.",
                  anims=[Create(b, lag_ratio=0.1), FadeIn(d)], run_time=4)
@@ -78,7 +78,7 @@ class Journey(Narrated):
         self.play(FadeOut(tr), FadeOut(d), rv.animate.set_value(RHO_HOPF), run_time=1.5)
         self.add(ticks[2], ticks[3])
         eq = MathTex(r"\rho_H = \frac{\sigma(\sigma+\beta+3)}{\sigma-\beta-1} = 24.74", font_size=36,
-                     color=ACCENT).move_to([-3.6, 1.6, 0])
+                     color=ACCENT).to_corner(UL, buff=0.6).shift(0.6 * DOWN)
         self.say(r"At $\rho_H$ the rolls themselves become unstable: their eigenvalues cross into the right "
                  r"half-plane (a Hopf bifurcation).", anims=[Write(eq)], run_time=1.5)
         self.say(r"(Between 24.06 and 24.74, the rolls and the chaos coexist: the same heating, two possible "
@@ -87,7 +87,7 @@ class Journey(Narrated):
         ev = np.linalg.eigvals(jacobian(fixed_points(28)[1], 28))
         ev = sorted(ev, key=lambda e: e.imag)
         evt = MathTex(r"\text{eigenvalues at } C_\pm:\ \ %.2f,\ \ %.3f \pm %.2f\,i" % (ev[1].real, ev[2].real,
-                      ev[2].imag), font_size=32, color=FG).move_to([-3.2, 1.6, 0])
+                      ev[2].imag), font_size=30, color=FG).to_corner(UL, buff=0.6).shift(0.5 * DOWN)
         trc = curve(lorenz_points(T=40, dt=0.004, skip=2), width=1.3, opacity=0.8, **SCR)
         d = fp_dots(28)
         self.say(r"$\rho = 28$. Nothing is stable any more: the origin and both rolls repel. "

@@ -67,7 +67,7 @@ def _ramp(t, stops=DENSITY_STOPS):
     return (cols[i] * (1 - a) + cols[i + 1] * a).astype(np.uint8)
 
 
-def glow_image(P, yaw=0.0, pitch=0.0, width=14.2, height=8.0, center=(0.0, 0.0), res=None,
+def glow_image(P, yaw=0.0, pitch=0.0, width=14.2, height=8.0, at=(0.0, 0.0), res=None,
                gain=1.0, weights=None, stops=DENSITY_STOPS, **kw):
     """Density image of a 3-D point set, as an ImageMobject covering width x height scene units."""
     if res is None:
@@ -75,7 +75,7 @@ def glow_image(P, yaw=0.0, pitch=0.0, width=14.2, height=8.0, center=(0.0, 0.0),
     w = max(res, 32)
     h = int(w * height / width)
     S = project(P, yaw, pitch, **kw)
-    cx, cy = center
+    cx, cy = at
     wts = np.ones(len(S)) if weights is None else np.asarray(weights, float)
     img = _splat(S[:, 0].copy(), S[:, 1].copy(), w, h, cx - width / 2, cx + width / 2,
                  cy - height / 2, cy + height / 2, wts)

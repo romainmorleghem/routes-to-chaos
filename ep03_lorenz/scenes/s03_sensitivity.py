@@ -20,7 +20,7 @@ class Sensitivity(Narrated):
         B = trajectory(b0, 8000, 0.005)
         self.say(r"Everybody quotes the butterfly. Let us \emph{measure} it. Two starting points, "
                  r"$10^{-10}$ apart: a distance far below any instrument.")
-        ax = Axes(x_range=[0, 40, 10], y_range=[-11, 2, 2], x_length=5.6, y_length=4.4, tips=False,
+        ax = Axes(x_range=[0, 40, 10], y_range=[-14, 2, 2], x_length=5.6, y_length=4.4, tips=False,
                   axis_config={"color": MUTED, "stroke_width": 2, "include_numbers": True, "font_size": 22}
                   ).move_to([3.3, 0.55, 0])
         ylab = MathTex(r"\log_{10} |\delta(t)|", font_size=28, color=FG).next_to(ax, UP, buff=0.15)
