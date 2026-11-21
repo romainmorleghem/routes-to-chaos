@@ -14,6 +14,7 @@ from common.lorenz import return_map, z_maxima, trajectory
 
 S, B = 10.0, 8.0 / 3.0
 Z0 = 98.0
+NK = 8
 OUT = Path(__file__).resolve().parents[1] / "data" / "doubling_floquet.json"
 
 
@@ -90,23 +91,33 @@ def run(dt, rho_guess):
     v, _ = fixed(pts[-1].copy(), n0, r, dt)
     v, _ = track(v, n0, r, rho_guess[0][1], dt)
     out, n = [], n0
-    for k, (lo, hi) in enumerate(rho_guess):
+    rho_guess = list(rho_guess)
+    for k in range(NK):
+        if k >= len(rho_guess):        # predict the next window from the last two gaps
+            a, b = out[-2][0], out[-1][0]
+            g = (a - b) / 4.669
+            rho_guess.append((b - 1.4 * g, b - 0.6 * g))
+        lo, hi = rho_guess[k]
         rk, v, J = locate(v, n, hi, lo, dt)
         out.append((rk, n))
         print("dt=%g k=%d crossings=%d rho_k=%.10f mu=%.8f" % (dt, k + 1, n, rk, mu_minus(J)), flush=True)
-        if k + 1 == len(rho_guess):
+        if k + 1 == NK:
             break
-        rs = rk - 0.02 * (rk - rho_guess[k + 1][1])
+        if k + 1 >= len(rho_guess):
+            g = (out[-2][0] - rk) / 4.669 if len(out) > 1 else 0.3
+            rho_guess.append((rk - 1.4 * g, rk - 0.6 * g))
+        rs = rk - 0.005 * (rk - rho_guess[k + 1][1])
         v, J = fixed(v, n, rs, dt)
         v = seed_double(v, n, rs, J, dt)
         n *= 2
-        v, _ = track(v, n, rs, rho_guess[k + 1][1], dt)
+        # the new orbit's amplitude grows like sqrt(rho_k - rho): continue with geometric steps
+        for r in rk - np.geomspace(rk - rs, rk - rho_guess[k + 1][1], 40):
+            v, _ = fixed(v, n, r, dt)
     return n0, out
 
 
 def main():
-    guess = [(99.97, 99.99), (99.62, 99.64), (99.543, 99.551), (99.5275, 99.5295), (99.5245, 99.5265),
-             (99.5236, 99.5246)]
+    guess = [(99.97, 99.99), (99.62, 99.64)]
     res = {}
     for dt in (0.002, 0.001):
         n0, out = run(dt, guess)
@@ -115,7 +126,7 @@ def main():
         print("dt", dt, "delta_k", d, flush=True)
         res[str(dt)] = {"n0": n0, "rho_k": rk, "crossings": [n for _, n in out], "delta_k": d}
         # refine the guesses for the next dt
-        guess = [(r - 2e-4, r + 2e-4) for r in rk]
+        guess = [(r - 0.1 * abs(r - q), r + 0.1 * abs(r - q)) for r, q in zip(rk[:2], rk[1:3])]
     OUT.write_text(json.dumps(res, indent=1))
 
 
