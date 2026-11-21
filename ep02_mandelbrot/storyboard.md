@@ -78,3 +78,14 @@ Attractors.*
 - Dates/attributions: Douady–Hubbard 1982 (connectedness), Shishikura 1998 (dimension 2), Tan Lei 1990
   (similarity at Misiurewicz points), Devaney's Farey/Fibonacci article (Amer. Math. Monthly, 1999).
 - Area value 1.5066 (estimate, not exact).
+
+## Status (preview rendered, 12 min 51 s)
+All 8 sequences exist (`scenes/s00…s07`), joins checked frame by frame, `render.py` assembles.
+Original elements kept from the plan and added while building:
+- two-panel device (parameter plane | dynamical plane) on screen from Seq 2 to Seq 6;
+- cardioid traced live while z* runs on |z| = ½ (Seq 3);
+- 5-spoke antenna zoom located offline (`tgt = centre + 0.06·u`, width 0.2);
+- "dragon" c = −0.8 + 0.156i: iterations raised live, the cream evaporates into dust (Seq 6);
+- Julia mosaic converging to M (Seq 6), Tan Lei side-by-side zoom at c = i (Seq 6);
+- cold open dives to the period-39 mini-brot −0.74364230 + 0.13182652i (Newton).
+Web page `web/ep2/`: WebGL M ↔ Julia explorer, gallery, bulb finder, Farey & δ tables, mosaic mode.

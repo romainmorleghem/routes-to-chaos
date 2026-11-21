@@ -44,3 +44,9 @@ nav.toc { font: 14px system-ui, sans-serif; color: var(--muted); display: flex; 
 nav.toc a { color: var(--muted); white-space: nowrap; }
 .katex { font-size: 1.05em; }
 @media (max-width: 600px) { table { font-size: 12px; } th, td { padding: 3px 5px; } .controls input[type=range] { width: 130px; } }
+.pair { display: flex; flex-wrap: wrap; gap: 12px; }
+.pair > .layer { flex: 1 1 300px; min-width: 0; position: relative; }
+.layer canvas { width: 100%; display: block; border-radius: 6px; }
+.layer canvas.ov { position: absolute; left: 0; top: 0; pointer-events: none; background: transparent; }
+#gallery button { margin: 0; }
+input[type=number] { background: #1d2430; color: var(--fg); border: 1px solid var(--line); border-radius: 6px; padding: 4px 6px; }

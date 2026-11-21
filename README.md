@@ -6,7 +6,7 @@ deterministic systems become chaotic.
 | Ep | Title | Status |
 |----|-------|--------|
 | 1 | The Logistic Map & Feigenbaum's Universal Constant | full preview (13 min) + web page |
-| 2 | The Mandelbrot Set is a Map of Chaos | storyboard + verified numbers |
+| 2 | The Mandelbrot Set is a Map of Chaos | full preview (12 min 51 s) + interactive page |
 | 3 | Strange Attractors: Chaos Without Energy Conservation | — |
 | 4 | The Standard Map & the Quantum Kicked Rotor | — |
 

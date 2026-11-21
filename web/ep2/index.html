@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mandelbrot Map of Chaos</title>
+<meta name="description" content="Routes to Chaos, part 2: interactive companion — pick any point of the Mandelbrot set and see its Julia set, bulbs, Farey fractions and Feigenbaum's constant.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<main>
+<p class="hint"><a href="../">Routes to Chaos</a> · Part 2 · <a href="../ep1/">← Part 1</a></p>
+<h1>The Mandelbrot Set is a Map of Chaos</h1>
+<p class="lede">Part 1 lived on a line. Here is the whole plane: every point of the Mandelbrot set is a rule
+$z\mapsto z^2+c$, and every rule has its own world, a Julia set. Click anywhere on the set to visit it.</p>
+<div class="video" id="video-slot" style="display:grid;place-items:center;color:var(--muted);font:14px system-ui">Video coming soon</div>
+<nav class="toc"><a href="#s1">1 · Squaring</a><a href="#s2">2 · The orbit of 0</a><a href="#s3">3 · Cardioid</a>
+<a href="#s4">4 · Bulbs &amp; Farey</a><a href="#s5">5 · Part 1 from above</a><a href="#s6">6 · Julia sets</a></nav>
+
+<h2 id="s1"><span class="num">1</span>Squaring in the plane</h2>
+<p>A complex number is a point of the plane, or an arrow with a length $|z|$ and an angle $\arg z$.
+Multiplying complex numbers multiplies lengths and adds angles, so $z^2$ has <strong>the length squared and
+twice the angle</strong>. Drag the orange arrow: inside the unit circle $z^2$ moves closer to 0, outside it flies
+away. The rule of this page is $f_c(z) = z^2 + c$: stretch-and-turn, then shift by $c$.</p>
+<div class="widget"><canvas id="sq"></canvas><div class="readout" id="sq-read"></div></div>
+
+<h2 id="s2"><span class="num">2</span>Where does 0 go?</h2>
+<p>Two planes side by side. <strong>Left</strong>: the parameter $c$, i.e. which rule we use.
+<strong>Right</strong>: the plane where the orbit $z_0 = 0,\ z_1 = c,\ z_2 = c^2 + c,\ \ldots$ lives. Click or
+drag on the left to choose $c$. Once an orbit leaves the disk of radius 2 (blue) it never comes back, since
+$|z|>2,\ |z|\ge|c| \Rightarrow |z^2+c| \ge |z|(|z|-1) > |z|$. The Mandelbrot set is</p>
+$$M = \{\, c \in \mathbb{C} : \text{the orbit of } 0 \text{ stays bounded} \,\}.$$
+<div class="widget">
+  <div class="pair">
+    <div class="layer"><canvas id="a-m"></canvas><canvas id="a-mo" class="ov"></canvas></div>
+    <div class="layer"><canvas id="a-z"></canvas><canvas id="a-zo" class="ov"></canvas></div>
+  </div>
+  <div class="readout" id="a-read"></div>
+  <div class="controls">
+    <label><input id="a-periods" type="checkbox"> colour the inside by period</label>
+    <label><input id="a-card" type="checkbox"> show the cardioid &amp; the disk $|c+1|&lt;\tfrac14$</label>
+    <button id="a-reset">Reset views</button>
+  </div>
+  <p class="hint">Scroll to zoom (single precision: down to about 10⁻⁵), double-click to reset.</p>
+</div>
+
+<h2 id="s3"><span class="num">3</span>The cardioid is a stability test</h2>
+<p>In the central region the orbit of 0 settles on a fixed point $z^\ast = z^{\ast 2}+c$. Exactly as in Part 1,
+chapter 2, it is stable when $|f_c'(z^\ast)| = |2z^\ast| < 1$. On the boundary $2z^\ast = e^{i\theta}$, hence
+$$c = z^\ast - z^{\ast 2} = \tfrac12 e^{i\theta} - \tfrac14 e^{2i\theta},$$
+a cardioid. At $\theta=\pi$, $c=-\tfrac34$: Part 1's first doubling $r_1 = 3$. The 2-cycle $z_1z_2$ has
+$z_1z_2 = c+1$, multiplier $4(c+1)$, hence the disk $|c+1|<\tfrac14$. Move $c$ along (or inside) the cardioid
+with the sliders below and watch the orbit in the widget above.</p>
+<div class="widget"><div class="controls" style="margin:0">
+  <label>θ / 2π <input id="a-theta" type="range" min="0" max="1" step="0.001" value="0.2"><output id="a-theta-out"></output></label>
+  <label>|2z*| <input id="a-k" type="range" min="0.5" max="1.05" step="0.01" value="0.95"><output id="a-k-out">0.95</output></label>
+</div></div>
+
+<h2 id="s4"><span class="num">4</span>Bulbs, rotations and fractions</h2>
+<p>The bulb attached to the cardioid at $\tfrac pq$ of a turn holds an attracting cycle of <strong>period
+$q$</strong>, which rotates around the fixed point by $\tfrac pq$ of a turn at each step (checked numerically
+for all $q\le 13$). Its antenna has $q$ spokes, and its size is close to $\sin(\pi p/q)/q^2$. Jump to any bulb:</p>
+<div class="widget"><div class="controls" style="margin:0">
+  <label>p <input id="a-p" type="number" min="1" max="40" value="2" style="width:56px"></label>
+  <label>q <input id="a-q" type="number" min="2" max="40" value="5" style="width:56px"></label>
+  <button id="a-bulb">Go to the p/q bulb (in the widget above)</button></div></div>
+<p>Between two bulbs, the largest one is given by the <strong>Farey sum</strong>
+$\tfrac ab \oplus \tfrac cd = \tfrac{a+c}{b+d}$. Iterating it from $\tfrac12, \tfrac13$ gives
+$\tfrac25, \tfrac38, \tfrac5{13},\ldots$ — Fibonacci periods — converging to the golden angle $1/\varphi^2$.</p>
+<div class="widget tablewrap"><table id="farey"></table></div>
+
+<h2 id="s5"><span class="num">5</span>Part 1's cascade, seen from above</h2>
+<p>For real $c$, $z\mapsto z^2+c$ is Part 1's logistic map in disguise ($z = r(\tfrac12 - x)$,
+$c = r/2 - r^2/4$). Along the real axis, its period-doubling cascade is a chain of bulbs of periods
+$1, 2, 4, 8, \ldots$ whose centres converge geometrically, with Feigenbaum's ratio:</p>
+<div class="widget tablewrap"><table id="delta"></table>
+  <div class="controls"><button id="a-mini">Show Part 1's period-3 window: the mini-Mandelbrot at c ≈ −1.7549</button></div></div>
+
+<h2 id="s6"><span class="num">6</span>Julia sets: one world per point</h2>
+<p>Fix $c$ and colour every <em>starting point</em> $z_0$ by the same rule: cream if its orbit stays bounded.
+The cream set is the <strong>filled Julia set</strong> $K_c$. <strong>Click or drag on the Mandelbrot set
+(left) and the Julia set (right) follows.</strong> The white dots are the orbit of the critical point 0.</p>
+<div class="widget">
+  <div id="gallery" class="controls" style="margin:0 0 10px"></div>
+  <div class="pair">
+    <div class="layer"><canvas id="j-m"></canvas><canvas id="j-mo" class="ov"></canvas></div>
+    <div class="layer"><canvas id="j-z"></canvas><canvas id="j-zo" class="ov"></canvas></div>
+  </div>
+  <div class="readout" id="j-read"></div>
+  <p class="readout" id="j-note"></p>
+  <div class="controls">
+    <label>iterations (Julia) <input id="j-it" type="range" min="50" max="3000" step="50" value="300" data-dp="0"><output id="j-it-out">300</output></label>
+    <label><input id="j-mosaic" type="checkbox"> draw a tiny Julia set at every point (mosaic)</label>
+    <label>tiles <input id="j-tiles" type="range" min="4" max="120" step="1" value="24"><output id="j-tiles-out">24</output></label>
+    <button id="j-reset">Reset views</button>
+  </div>
+</div>
+<p class="key">$c \in M \iff K_c$ is connected (Fatou, Julia, 1919). The reason is the <strong>critical point</strong>
+0, the only point where $f_c'(z) = 2z$ vanishes — the analogue of $x=\tfrac12$ in Part 1: if its orbit escapes,
+the Julia set shatters into dust. In the mosaic, the connected Julia sets draw the Mandelbrot set itself:
+$M$ is an index of all the Julia sets. Near points like $c = i$, $M$ even looks like the Julia set it indexes
+(Tan Lei, 1990).</p>
+<p class="hint">Next: Part 3 · Strange attractors. Source code: <a href="https://github.com/romainmorleghem/routes-to-chaos">github.com/romainmorleghem/routes-to-chaos</a></p>
+</main>
+<script type="module" src="ep2.js"></script>
+</body>
+</html>
