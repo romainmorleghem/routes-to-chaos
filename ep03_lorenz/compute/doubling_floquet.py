@@ -45,17 +45,19 @@ def mu_minus(J):
     return ev[np.argmin(np.abs(ev + 1))].real
 
 
-def locate(v, n, r0, r1, dt):
-    """secant on mu(rho) + 1 = 0, tracking the orbit"""
-    v0, J0 = fixed(v, n, r0, dt); f0 = mu_minus(J0) + 1
-    v1, J1 = fixed(v0, n, r1, dt); f1 = mu_minus(J1) + 1
-    for _ in range(40):
-        r2 = r1 - f1 * (r1 - r0) / (f1 - f0)
-        v2, J2 = fixed(v1, n, r2, dt); f2 = mu_minus(J2) + 1
-        r0, f0, v0, r1, f1, v1 = r1, f1, v1, r2, f2, v2
-        if abs(r1 - r0) < 1e-11:
-            break
-    return r1, v1, J2
+def locate(v, n, r_hi, r_lo, dt):
+    """Brent's method on mu(rho) + 1 = 0 in [r_lo, r_hi]; the orbit is tracked from the last good point."""
+    from scipy.optimize import brentq
+    state = {"v": v}
+    def g(r):
+        w, J = fixed(state["v"], n, r, dt)
+        if not np.all(np.isfinite(J)):
+            w, J = track(state["v"], n, state.get("r", r_hi), r, dt, steps=8)
+        state["v"], state["r"], state["J"] = w, r, J
+        return mu_minus(J) + 1
+    rk = brentq(g, r_lo, r_hi, xtol=1e-12, rtol=1e-14)
+    g(rk)
+    return rk, state["v"], state["J"]
 
 
 def track(v, n, r_from, r_to, dt, steps=12):
@@ -89,7 +91,7 @@ def run(dt, rho_guess):
     v, _ = track(v, n0, r, rho_guess[0][1], dt)
     out, n = [], n0
     for k, (lo, hi) in enumerate(rho_guess):
-        rk, v, J = locate(v, n, hi, lo + 0.6 * (hi - lo), dt)
+        rk, v, J = locate(v, n, hi, lo, dt)
         out.append((rk, n))
         print("dt=%g k=%d crossings=%d rho_k=%.10f mu=%.8f" % (dt, k + 1, n, rk, mu_minus(J)), flush=True)
         if k + 1 == len(rho_guess):
