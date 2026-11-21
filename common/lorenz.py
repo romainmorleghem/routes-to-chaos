@@ -162,3 +162,37 @@ def section_return(p, dt, zs, s=SIGMA, r=RHO, b=BETA, nmax=200000):
         x, y, z = nx, ny, nz
         t += dt
     return np.array([np.nan, np.nan, np.nan]), t
+
+
+@njit(cache=True)
+def _rk4(x, y, z, h, s, r, b):
+    k1 = _rhs(x, y, z, s, r, b)
+    k2 = _rhs(x + .5 * h * k1[0], y + .5 * h * k1[1], z + .5 * h * k1[2], s, r, b)
+    k3 = _rhs(x + .5 * h * k2[0], y + .5 * h * k2[1], z + .5 * h * k2[2], s, r, b)
+    k4 = _rhs(x + h * k3[0], y + h * k3[1], z + h * k3[2], s, r, b)
+    return (x + h / 6 * (k1[0] + 2 * k2[0] + 2 * k3[0] + k4[0]),
+            y + h / 6 * (k1[1] + 2 * k2[1] + 2 * k3[1] + k4[1]),
+            z + h / 6 * (k1[2] + 2 * k2[2] + 2 * k3[2] + k4[2]))
+
+
+@njit(cache=True)
+def return_map(x, y, zs, n, dt, s, r, b):
+    """n-th upward crossing of z = zs starting from (x, y, zs). The crossing time is refined by
+    Newton on the step length (each trial is a fresh RK4 step), so the section point carries the
+    full RK4 accuracy instead of the O(dt^2) error of linear interpolation."""
+    z = zs
+    hits = 0
+    for i in range(50_000_000):
+        nx, ny, nz = _rk4(x, y, z, dt, s, r, b)
+        if i > 5 and z < zs <= nz:
+            h = dt * (zs - z) / (nz - z)
+            for _ in range(8):
+                tx, ty, tz = _rk4(x, y, z, h, s, r, b)
+                dz = tx * ty - b * tz                    # dz/dt at the trial point
+                h -= (tz - zs) / dz
+            tx, ty, tz = _rk4(x, y, z, h, s, r, b)
+            hits += 1
+            if hits == n:
+                return tx, ty
+        x, y, z = nx, ny, nz
+    return np.nan, np.nan

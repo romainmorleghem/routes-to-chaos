@@ -24,7 +24,7 @@ SEQUENCE = [
     ("s06_skeleton", "Skeleton"),
     ("s07_teaser", "TeaserLorenz"),
 ]
-QUALITY = {"l": "480p15", "m": "720p30", "h": "1080p60", "p": "1440p60", "k": "2160p60"}
+QUALITY = {"f": "1080p30", "l": "480p15", "m": "720p30", "h": "1080p60", "p": "1440p60", "k": "2160p60"}
 
 
 def main():
@@ -40,7 +40,8 @@ def main():
         todo = not a.no_render and (a.only is None or any(f.startswith(o) for o in a.only))
         if todo or not out.exists():
             print(f"--> {f}.{scene} [{folder}]", flush=True)
-            subprocess.run(["manim", f"-q{a.q}", "--media_dir", str(MEDIA), str(HERE / "scenes" / f"{f}.py"),
+            qflag = ["-r", "1920,1080", "--fps", "30"] if a.q == "f" else [f"-q{a.q}"]
+            subprocess.run(["manim", *qflag, "--media_dir", str(MEDIA), str(HERE / "scenes" / f"{f}.py"),
                             scene], check=True, cwd=HERE / "scenes")
         parts.append(out)
     lst = MEDIA / f"ep03_{folder}.txt"
