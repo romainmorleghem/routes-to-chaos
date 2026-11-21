@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Kicked Rotor</title>
+<meta name="description" content="Routes to Chaos, part 4: interactive companion. Kick a rotor, watch KAM curves break, measure chaotic diffusion, find the conservative Feigenbaum constant, and see quantum mechanics freeze chaos.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
+<link rel="stylesheet" href="../assets/style.css">
+<style>
+.sq { aspect-ratio: 1; width: 100%; max-width: 560px; display: block; margin: 0 auto; cursor: crosshair; background: var(--bg); }
+.controls button { margin: 0; }
+</style>
+</head>
+<body>
+<main>
+<p class="hint"><a href="../">Routes to Chaos</a> · Part 4 · <a href="../ep3/">← Part 3</a></p>
+<h1>The Kicked Rotor</h1>
+<p class="lede">A rod on an axle, kicked once per second. Without friction, chaos and order coexist forever; and when
+the rod is quantum, its chaos stops. Click in the pictures to launch orbits.</p>
+<video class="video" controls preload="metadata" playsinline poster="poster.jpg"><source src="ep04_1080p.mp4" type="video/mp4">Your browser does not support HTML5 video.</video>
+<nav class="toc"><a href="#s1">1 · The standard map</a><a href="#s2">2 · The last wall</a><a href="#s3">3 · Random walk</a>
+<a href="#s4">4 · δ = 8.7210</a><a href="#s5">5 · Quantum rotor</a><a href="#s6">6 · Hidden crystal</a></nav>
+
+<h2 id="s1"><span class="num">1</span>Kicks become a map</h2>
+<p>Between kicks the rod turns at constant speed $p$; each kick changes the speed by $K\sin\theta$:
+$$p_{n+1} = p_n + K\sin\theta_n,\qquad \theta_{n+1} = \theta_n + p_{n+1}\quad(\mathrm{mod}\ 2\pi).$$
+The Jacobian determinant is exactly 1: areas are preserved (no friction), so there is no attractor. Every
+orbit keeps its own character: closed curves (KAM tori), chains of islands at rational rotations $P/q$, and
+chaotic seas (red: positive Lyapunov exponent).</p>
+<div class="widget">
+  <canvas id="ph" class="sq"></canvas>
+  <div class="controls">
+    <label>K <input type="range" id="K" min="0" max="7" step="0.000001" value="0.971635"><output id="K-o"></output></label>
+    <span id="presets"></span>
+    <button id="fill">fill</button><button id="clr">clear</button>
+    <label><input type="checkbox" id="gold"> golden curve (377/610 orbit)</label>
+  </div>
+  <div class="readout" id="ph-read"></div>
+</div>
+
+<h2 id="s2"><span class="num">2</span>The last wall: Greene's criterion</h2>
+<p>A KAM curve with rotation number $\omega$ blocks all transport in $p$. The most robust is the golden one,
+$\omega = (\sqrt5-1)/2$, the number hardest to approximate by fractions. Greene's criterion: follow the periodic
+orbits $F_n/F_{n+1}$ that approach it; the curve exists while their residue $R = (2-\mathrm{tr}\,M)/4$ stays
+below $1/4$. The values $K_n$ where $R = 1/4$, computed by symmetric-orbit shooting with exact tangent maps:</p>
+<div class="widget tablewrap"><table id="gtab"></table></div>
+
+<h2 id="s3"><span class="num">3</span>Chaos as a random walk</h2>
+<p>Above $K_c$, the speed of a chaotic orbit wanders without bound. If successive angles were independent,
+$\langle (p_n - p_0)^2\rangle = \frac{K^2}{2}n$. Below: a live ensemble of 3000 rotors (red) against this guess
+(blue). Then the measured ratio $D/\frac{K^2}{2}$ for all $K$, with Rechester &amp; White's Bessel-function correction
+(orange); spikes are accelerator modes. Click the lower plot to choose $K$.</p>
+<div class="widget">
+  <div class="row"><canvas id="walk"></canvas><canvas id="dk"></canvas></div>
+  <div class="controls"><label>K <input type="range" id="Kw" min="0.5" max="30" step="0.01" value="5"><output id="Kw-o"></output></label></div>
+  <div class="readout" id="walk-read"></div>
+</div>
+
+<h2 id="s4"><span class="num">4</span>Period doubling without friction: δ = 8.7210</h2>
+<p>The centre of the main island, $(\pi, 0)$, has $\mathrm{tr}\,M = 2 - K$ and loses stability at $K=4$, where it
+period-doubles. The generic model of this cascade is the area-preserving Hénon map
+$(x,y)\mapsto(1-ax^2+y,\,-x)$. Explore it (click to launch orbits) and compare the cascade with Part 1:</p>
+<div class="widget">
+  <div class="row"><canvas id="hen" class="sq"></canvas><div class="tablewrap"><table id="dtab"></table></div></div>
+  <div class="controls"><label>a <input type="range" id="a" min="1.5" max="4.2" step="0.001" value="3.3"><output id="a-o"></output></label>
+    <button id="hfill">fill</button></div>
+  <div class="readout">Gaps shrink by $\delta_k \to 8.721097\ldots$ (Greene, MacKay, Vivaldi &amp; Feigenbaum 1981), the
+    universal constant of area-preserving maps, against $4.669$ with friction.</div>
+</div>
+
+<h2 id="s5"><span class="num">5</span>The quantum rotor: chaos frozen</h2>
+<p>Quantum rotor: $p = \hbar m$. A kick multiplies $\psi(\theta)$ by $e^{-ik\cos\theta}$, free rotation multiplies
+$\psi_m$ by $e^{-i\hbar m^2/2}$; classical strength $K = k\hbar$. The simulation below runs both the wave
+(2048 momentum states, FFT) and 4000 classical rotors starting at $p=0$. Watch the quantum spread saturate:
+dynamical localization, with $|\psi_m|^2\propto e^{-|m|/\lambda}$ and $\lambda\approx D/\hbar^2$.</p>
+<div class="widget">
+  <div class="row"><canvas id="prof"></canvas><canvas id="m2"></canvas></div>
+  <div class="controls">
+    <label>k <input type="range" id="kq" min="1" max="25" step="0.1" value="12.5"><output id="kq-o"></output></label>
+    <label>ħ <input type="range" id="hq" min="0.1" max="2" step="0.001" value="0.4"><output id="hq-o"></output></label>
+    <button id="res">ħ = 4π (resonance)</button><button id="go">restart</button>
+  </div>
+  <div class="readout" id="q-read"></div>
+</div>
+<div class="widget tablewrap"><table id="stab"></table></div>
+
+<h2 id="s6"><span class="num">6</span>The hidden crystal</h2>
+<p>Fishman, Grempel &amp; Prange (1982): the quantum rotor is exactly a particle hopping on a lattice of sites $m$
+with energies $T_m = \tan\big(\tfrac12(\omega - \hbar m^2/2)\big)$. For $\hbar/4\pi$ irrational they look random:
+a disordered crystal, where waves are trapped by interference (Anderson localization). For $\hbar = 4\pi$ (or
+rational multiples) the lattice is periodic and the wave runs away ballistically, $\langle m^2\rangle = k^2n^2/2$.
+The site energies for the current $\hbar$:</p>
+<div class="widget"><canvas id="lat"></canvas></div>
+
+<p class="hint">This was the last part. Back to <a href="../">all four routes to chaos</a>. Source code:
+<a href="https://github.com/romainmorleghem/routes-to-chaos">github.com/romainmorleghem/routes-to-chaos</a></p>
+</main>
+<script type="module" src="ep4.js"></script>
+</body>
+</html>
