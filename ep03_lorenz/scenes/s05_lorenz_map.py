@@ -104,15 +104,15 @@ class LorenzMap(Narrated):
         tab = MathTable(rows, col_labels=[MathTex(c) for c in (r"k", r"\text{loops}", r"\rho_k", r"\delta_k")],
                         include_outer_lines=False, line_config={"stroke_color": MUTED, "stroke_width": 1.5},
                         element_to_mobject_config={"font_size": 34}, v_buff=0.32, h_buff=0.7)
-        tab.scale_to_fit_height(5.2).move_to([-2.7, 0.45, 0])
+        tab.scale_to_fit_width(7.4).move_to([-2.85, 0.45, 0])
         dl = MathTex(r"\delta_k = \frac{\rho_{k-1} - \rho_k}{\rho_k - \rho_{k+1}}", font_size=36, color=FG
-                     ).move_to([3.4, 1.4, 0])
+                     ).move_to([3.75, 1.4, 0])
         self.say(r"Measure where the doublings happen and take the ratios of successive gaps, "
                  r"as in Part 1:", anims=[FadeIn(tab), Write(dl)], run_time=1.5)
         lim = MathTex(r"\longrightarrow\ \delta = %.4f\ldots" % DELTA, font_size=40, color=ACCENT
                       ).next_to(dl, DOWN, buff=0.6)
         self.say(r"Each $\rho_k$ is located where the orbit's Floquet multiplier crosses $-1$ (Newton on a "
-                 r"Poincar\'e section; stable to $10^{-9}$ when the time step is halved).")
+                 r"Poincar\'e section; stable to $10^{-7}$ when the time step is halved).")
         self.say(r"%s\ldots{} converging to Feigenbaum's $\delta = 4.6692$, the constant of Part 1."
                  % ", ".join("%.3f" % d for d in dk), anims=[Write(lim)], run_time=1.5)
         self.say(r"A fluid model, three equations, nothing like $rx(1-x)$\ldots{} and the same constant. "

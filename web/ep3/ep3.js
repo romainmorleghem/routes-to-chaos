@@ -246,8 +246,8 @@ $("bif").addEventListener("click", e => {
   $("s1").scrollIntoView({ behavior: "smooth" });
 });
 const rk = D.rho_k;
-$("dtab").innerHTML = `<tr><th>k</th><th>ρ_k (doubling to period 3·2^k peaks)</th><th>δ_k = (ρ_{k−1} − ρ_k)/(ρ_k − ρ_{k+1})</th></tr>` +
-  rk.map((r, i) => `<tr><td>${i + 1}</td><td>${r.toFixed(4)}</td><td class="acc">${i > 0 && i < rk.length - 1 ? D.delta_k[i - 1].toFixed(3) : ""}</td></tr>`).join("") +
+$("dtab").innerHTML = `<tr><th>k</th><th>loops</th><th>ρ_k (Floquet multiplier −1)</th><th>δ_k = (ρ_{k−1} − ρ_k)/(ρ_k − ρ_{k+1})</th></tr>` +
+  rk.map((r, i) => `<tr><td>${i + 1}</td><td>${D.crossings[i]}</td><td>${r.toFixed(9)}</td><td class="acc">${i > 0 && i < rk.length - 1 ? D.delta_k[i - 1].toFixed(4) : ""}</td></tr>`).join("") +
   `<tr><td></td><td>Feigenbaum (Part 1)</td><td class="acc">4.669…</td></tr>`;
 
 // ------------------------------------------------------------ §6 skeleton
