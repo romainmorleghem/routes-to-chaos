@@ -55,13 +55,13 @@ class Golden(Narrated):
                   axis_config={"color": MUTED, "stroke_width": 1.5, "include_numbers": False},
                   y_axis_config={"include_numbers": True, "font_size": 24, "numbers_to_include": [-20, -10, 10]}
                   ).move_to([0, 0.3, 0])
-        xl = Tex(r"$0 	o 200\,000$ kicks", font_size=28, color=MUTED).next_to(ax, DOWN, buff=0.1).align_to(ax, RIGHT)
+        xl = Tex(r"$0 \to 200\,000$ kicks", font_size=28, color=MUTED).next_to(ax, DOWN, buff=0.1).align_to(ax, RIGHT)
         yl = MathTex(r"p", font_size=32, color=FG).next_to(ax.y_axis, UP, buff=0.1)
         n = np.arange(a.size) * 250
         ca = ax.plot_line_graph(n, a, add_vertex_dots=False, line_color=MUTED, stroke_width=2)
         cb = ax.plot_line_graph(n, b, add_vertex_dots=False, line_color=ORBIT, stroke_width=2)
-        la = MathTex(r"K = 0.95", font_size=30, color=MUTED).next_to(ax.c2p(200000, 2.4), UR, buff=0.1)
-        lb = MathTex(r"K = 1.2", font_size=30, color=ORBIT).next_to(ax.c2p(200000, b[-1]), RIGHT, buff=0.1)
+        la = MathTex(r"K = 0.95", font_size=30, color=MUTED).next_to(ax.c2p(200000, 2.6), UP, buff=0.1).shift(0.4 * LEFT)
+        lb = MathTex(r"K = 1.2", font_size=30, color=ORBIT).next_to(ax.c2p(200000, b[-1]), DOWN, buff=0.15).shift(0.4 * LEFT)
         self.say(r"Follow the speed of one chaotic orbit, without the modulo. Below $K_c$ (grey) it stays "
                  r"trapped between two walls, forever.", anims=[Create(ax), FadeIn(xl), FadeIn(yl),
                                                             Create(ca), FadeIn(la)], run_time=3)
