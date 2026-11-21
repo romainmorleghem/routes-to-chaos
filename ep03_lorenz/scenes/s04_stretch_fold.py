@@ -89,7 +89,7 @@ class StretchFold(Narrated):
         # fractal dimension
         self.chapter(r"4 \,$\cdot$\, A book of infinitely many pages")
         Pg = lorenz_points(T=600, dt=0.002, skip=5)
-        glow = glow_image(Pg, yaw=0.3, pitch=-0.2)
+        glow = glow_image(Pg)
         self.play(FadeIn(glow))
         self.say(r"Each fold lays a sheet on top of another. Zoom in on what looks like a surface, and it splits "
                  r"into two sheets, then four\ldots{} an infinite stack.")
