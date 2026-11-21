@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Strange Attractors</title>
+<meta name="description" content="Routes to Chaos, part 3: interactive companion — play with the Lorenz equations, measure the butterfly effect, watch ink stretch and fold, and find Part 1's map inside the flow.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
+<link rel="stylesheet" href="../assets/style.css">
+<style>
+.cv3 { aspect-ratio: 16/10; cursor: grab; }
+.cv3:active { cursor: grabbing; }
+#presets button { margin: 0; }
+</style>
+</head>
+<body>
+<main>
+<p class="hint"><a href="../">Routes to Chaos</a> · Part 3 · <a href="../ep2/">← Part 2</a></p>
+<h1>Strange Attractors</h1>
+<p class="lede">Parts 1 and 2 iterated a map: time jumped. Here time flows. Three equations, a point moving in
+space, and a shape that is neither a point, nor a loop, nor a surface. Drag any 3-D view to rotate it.</p>
+<div class="video" id="video-slot" style="display:grid;place-items:center;color:var(--muted);font:14px system-ui">Video coming soon</div>
+<nav class="toc"><a href="#s1">1 · The equations</a><a href="#s2">2 · Turning up ρ</a><a href="#s3">3 · The butterfly, measured</a>
+<a href="#s4">4 · Stretch and fold</a><a href="#s5">5 · Part 1 inside</a><a href="#s6">6 · The skeleton</a></nav>
+
+<h2 id="s1"><span class="num">1</span>Three equations, one moving point</h2>
+<p>$$\dot x = \sigma(y-x),\qquad \dot y = x(\rho - z) - y,\qquad \dot z = xy - \beta z.$$
+They describe Lorenz's convection roll, and exactly a leaky water wheel: $x$ is how fast the wheel turns,
+$y$ how lopsided it is, $z$ how top-heavy. The divergence of the velocity field is
+$-(\sigma + 1 + \beta)$, a negative constant: every blob of initial conditions loses volume at the same rate,
+so the motion collapses onto a set of zero volume, the attractor.</p>
+
+<div class="widget">
+  <canvas id="att" class="cv3"></canvas>
+  <div class="readout" id="att-read"></div>
+  <div class="controls">
+    <label>σ <input type="range" id="sig" min="1" max="20" step="0.1" value="10"><output id="sig-o"></output></label>
+    <label>ρ <input type="range" id="rho" min="0" max="200" step="0.01" value="28"><output id="rho-o"></output></label>
+    <label>β <input type="range" id="bet" min="0.2" max="6" step="0.01" value="2.6667"><output id="bet-o"></output></label>
+    <label><input type="checkbox" id="spin" checked> auto-rotate</label>
+  </div>
+  <div class="controls" id="presets"></div>
+</div>
+
+<h2 id="s2"><span class="num">2</span>Turning up the heat</h2>
+<p>With $\sigma = 10$, $\beta = 8/3$, the story as $\rho$ increases (use the presets above):</p>
+<ul>
+<li>$\rho < 1$: everything falls to rest at the origin.</li>
+<li>$\rho = 1$: rest becomes unstable; two steady rolls $C_\pm = (\pm\sqrt{\beta(\rho-1)}, \pm\sqrt{\beta(\rho-1)}, \rho-1)$ take over.</li>
+<li>$13.93 < \rho < 24.06$: <em>transient chaos</em>. Orbits wander chaotically, sometimes for long, then settle on a roll.</li>
+<li>$\rho_H = \sigma(\sigma+\beta+3)/(\sigma-\beta-1) \approx 24.74$: the rolls lose stability (Hopf). Between 24.06 and 24.74, rolls and chaos coexist.</li>
+<li>$\rho = 28$: the strange attractor. Near $\rho \approx 100$: periodic orbits again, and a period-doubling cascade (§5).</li>
+</ul>
+<div class="widget tablewrap"><table id="fp"></table></div>
+
+<h2 id="s3"><span class="num">3</span>The butterfly, measured</h2>
+<p>Two starting points $10^{-k}$ apart. On a log scale their distance grows along a straight line of slope
+$\lambda_1 \approx 0.906$ (the largest Lyapunov exponent) until it saturates at the size of the attractor. So
+each factor 10 of extra precision buys only $\ln 10/\lambda_1 \approx 2.5$ time units of prediction.</p>
+<div class="widget">
+  <div class="row"><canvas id="duo" class="cv3"></canvas><canvas id="duo-log"></canvas></div>
+  <div class="readout" id="duo-read"></div>
+  <div class="controls">
+    <label>separation $10^{-k}$, k = <input type="range" id="k" min="1" max="14" step="1" value="10"><output id="k-o"></output></label>
+    <button id="duo-go">Restart</button>
+  </div>
+</div>
+<p class="key">Lyapunov spectrum at $\rho = 28$: <span id="spec"></span>. The sum equals the divergence
+$-(\sigma+1+\beta) = -13.667$: stretching, neutral, crushing.</p>
+
+<h2 id="s4"><span class="num">4</span>Stretch and fold: a drop of ink</h2>
+<p>Chaos in a bounded region needs two things: <em>stretching</em> (sensitivity) and <em>folding</em> (to stay
+bounded). Part 1's map $4x(1-x)$ does both to an interval; the Lorenz flow does both to a sheet. Release a drop of
+20 000 initial conditions and watch it. The resulting object is a stack of infinitely many sheets, with
+Kaplan–Yorke dimension $D = 2 + \lambda_1/|\lambda_3| \approx 2.06$.</p>
+<div class="widget">
+  <canvas id="ink" class="cv3"></canvas>
+  <div class="readout" id="ink-read"></div>
+  <div class="controls"><button id="ink-go">Drop the ink again</button>
+    <label>drop radius <input type="range" id="ink-r" min="-3" max="0.3" step="0.1" value="-0.3"><output id="ink-r-o"></output></label></div>
+</div>
+
+<h2 id="s5"><span class="num">5</span>Part 1, hidden inside</h2>
+<p>Lorenz (1963) recorded the successive maxima $z_1, z_2, \dots$ of $z(t)$ and plotted $z_{n+1}$ against $z_n$.
+The points fall on a thin curve with one hump: a one-dimensional map, which we can cobweb exactly as in Part 1. Its
+slope exceeds 1 in absolute value everywhere, so no periodic orbit can be stable. Change $\rho$ with the slider in §1.</p>
+<div class="widget">
+  <canvas id="lmap"></canvas>
+  <div class="readout" id="lmap-read"></div>
+  <div class="controls"><button id="lmap-cob">Cobweb the next 20 peaks</button></div>
+</div>
+<p>Because the flow hides a one-hump map, Feigenbaum's universality applies. Near $\rho \approx 100$ the stable
+orbit doubles its period as $\rho$ decreases, and the gaps between doublings shrink by a factor tending to
+$\delta = 4.669\ldots$ Click the diagram to load that $\rho$ in the 3-D view.</p>
+<div class="widget">
+  <canvas id="bif"></canvas>
+  <div class="controls"><label><input type="radio" name="bw" value="window" checked> window ρ ∈ [99.3, 100.85]</label>
+    <label><input type="radio" name="bw" value="wide"> overview ρ ∈ [20, 220]</label></div>
+  <div class="tablewrap"><table id="dtab"></table></div>
+</div>
+
+<h2 id="s6"><span class="num">6</span>The skeleton: unstable periodic orbits</h2>
+<p>The attractor is threaded with infinitely many periodic orbits, all unstable. Each is named by its itinerary:
+<code>L</code> for a loop around the left roll, <code>R</code> for the right. A chaotic orbit shadows one, is
+ejected (by the multiplier μ per lap), shadows another. Averages over the attractor can be computed from these
+cycles alone (periodic-orbit theory). Computed here by Newton's method on the Poincaré section $z = 27$.</p>
+<div class="widget">
+  <canvas id="upo" class="cv3"></canvas>
+  <div class="controls" id="upo-btn" style="margin-top:10px"></div>
+  <div class="readout" id="upo-read"></div>
+</div>
+
+<p class="hint">Next: Part 4 · The standard map &amp; the quantum kicked rotor: what remains of chaos when volume is
+conserved. Source code: <a href="https://github.com/romainmorleghem/routes-to-chaos">github.com/romainmorleghem/routes-to-chaos</a></p>
+</main>
+<script type="module" src="ep3.js"></script>
+</body>
+</html>

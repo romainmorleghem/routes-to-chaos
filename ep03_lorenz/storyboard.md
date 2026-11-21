@@ -5,6 +5,7 @@ each scene starts on the previous scene's last frame (`scenes/_stages.py`), no v
 Opens on the last frame of Part 2 (Lorenz equations on black, "Epilogue · When time flows").
 
 ## The original angle (the subject is heavily covered on YouTube)
+**Validated by the user:** this angle, the water wheel in s01, target length ≈ 12 min.
 Do NOT do the usual "butterfly + pretty spinning attractor". Thread: **the Lorenz system secretly
 contains Part 1.** Lorenz's own 1963 trick — plot successive maxima z_n → z_{n+1} — gives a 1-D
 tent-like map; we cobweb it exactly as in Part 1. Then: chaos is *stretching + folding* (the same
