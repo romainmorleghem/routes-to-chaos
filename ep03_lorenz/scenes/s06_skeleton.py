@@ -48,21 +48,21 @@ class Skeleton(Narrated):
         self.play(FadeOut(VGroup(shown, legend, bg)))
         # gallery
         self.chapter(r"6 \,$\cdot$\, Other strange attractors")
-        names = [("R\\\"ossler", 0, 0.03, 0.4, -0.5, "one fold, like a sheet of paper"),
-                 ("Thomas", 1, 0.05, 0.6, 0.6, "a random walk with no randomness"),
-                 ("Aizawa", 2, 0.01, 0.4, -0.3, "a sphere with a tube through it"),
-                 ("Halvorsen", 3, 0.005, 0.8, 0.5, "three-fold symmetric wings")]
+        names = [("R\\\"ossler", 0, 0.03, 600, (0.1, 0.0, 0.1), 0.4, -0.5, "one fold, like a sheet of paper"),
+                 ("Thomas", 1, 0.05, 4000, (0.1, 0.0, 0.1), 0.6, 0.6, "a random walk with no randomness"),
+                 ("Aizawa", 2, 0.01, 600, (0.1, 0.0, 0.1), 0.4, -0.3, "a sphere with a tube through it"),
+                 ("Halvorsen", 3, 0.005, 600, (-1.48, -1.51, 2.04), 0.8, 0.5, "three-fold symmetric wings")]
         tiles = Group()
-        for j, (nm, kind, dt, yaw, pitch, cap) in enumerate(names):
-            P = trajectory_any(kind, np.array([0.1, 0.0, 0.1]), int(400 / dt * (0.02 / 0.02)), dt)[2000:]
+        for j, (nm, kind, dt, T, p0, yaw, pitch, cap) in enumerate(names):
+            P = trajectory_any(kind, np.array(p0), int(T / dt), dt)[2000:]
             P = P[:: max(1, len(P) // 400000)]
-            v = fit_view(P, yaw, pitch, 5.8, 2.6)
-            im = glow_image(P, yaw, pitch, width=6.6, height=2.95, **v,
+            v = fit_view(P, yaw, pitch, 5.0, 2.2)
+            im = glow_image(P, yaw, pitch, width=5.6, height=2.45, **v,
                             screen=np.array([0, 0, 0.0]))
             t = Tex(nm, font_size=28, color=FG)
             c = Tex(cap, font_size=22, color=MUTED)
             tiles.add(Group(im, VGroup(t, c).arrange(DOWN, buff=0.06)).arrange(DOWN, buff=0.05))
-        tiles.arrange_in_grid(2, 2, buff=(0.35, 0.15)).move_to([0, 0.3, 0])
+        tiles.arrange_in_grid(2, 2, buff=(0.6, 0.12)).move_to([0, 0.45, 0])
         self.say(r"Other equations, other shapes, same recipe: a flow that stretches, folds, and loses volume.",
                  anims=[FadeIn(tiles, lag_ratio=0.3)], run_time=3)
         self.wait(2)

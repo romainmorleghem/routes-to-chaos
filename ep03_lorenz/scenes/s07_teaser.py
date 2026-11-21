@@ -49,6 +49,7 @@ class TeaserLorenz(Narrated):
                   ).next_to(nxt, DOWN, buff=0.3)
         g = VGroup(nxt, ttl).move_to([0, -2.6, 0])
         bgr = BackgroundRectangle(g, fill_opacity=0.85, buff=0.2)
+        self.play(FadeOut(im), FadeOut(eq), run_time=0.8)
         self.play(FadeIn(bgr), FadeIn(nxt), FadeIn(ttl, shift=0.2 * UP), FadeOut(self.chapter_tag))
         self.wait(3)
-        self.play(FadeOut(Group(bgr, nxt, ttl, im, eq)))
+        self.play(FadeOut(Group(bgr, nxt, ttl)))

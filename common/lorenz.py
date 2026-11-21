@@ -121,8 +121,8 @@ def _rhs_any(kind, x, y, z):
         a, b, c, d, e, f = 0.95, 0.7, 0.6, 3.5, 0.25, 0.1
         return ((z - b) * x - d * y, d * x + (z - b) * y,
                 c + a * z - z ** 3 / 3 - (x * x + y * y) * (1 + e * z) + f * z * x ** 3)
-    # Halvorsen a=1.89
-    a = 1.89
+    # Halvorsen a=1.4
+    a = 1.4
     return (-a * x - 4 * y - 4 * z - y * y, -a * y - 4 * z - 4 * x - z * z, -a * z - 4 * x - 4 * y - x * x)
 
 
